@@ -1,3 +1,4 @@
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<sys/types.h>
@@ -8,9 +9,22 @@
  Author: Aditya Joshi.
  */
 
-void *malloc(size_t size)
+struct block_meta
 {
-  void *p = sbrk(0);
+  size_t size;
+  struct block_meta *next;
+  int free;
+  int indicator;
+  
+};
+
+#define META_SIZE sizeof(struct block_meta)
+void *global_head = NULL;
+
+
+void *mal(size_t size)
+{
+    void *p = sbrk(0);
   void *request = sbrk(size);
    if(request == (void *) -1)
    {
@@ -25,7 +39,7 @@ void *malloc(size_t size)
 
 int main()
 {
-   int *arr = malloc(sizeof(int) * 2);
+   int *arr = mal(sizeof(int) * 2);
    arr[0] = 1;
    arr[1] = 2;
    printf("%d \n", arr[1]);
