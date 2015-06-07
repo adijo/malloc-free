@@ -21,28 +21,48 @@ struct block_meta
 #define META_SIZE sizeof(struct block_meta)
 void *global_head = NULL;
 
-
-void *mal(size_t size)
+struct block_meta* find_empty(size_t size, struct block_meta *curr)
 {
-    void *p = sbrk(0);
+  if(curr == NULL)
+    {
+      return NULL;
+    }
+  else
+    {
+      if(curr->free == 1 && curr->size >= size)
+	{
+	  return curr;
+	}
+      else
+	{
+	  return find_empty(size, curr->next);
+	}
+    }
+}
+
+
+
+void *allocate(size_t size)
+{
+  void *p = sbrk(0);
   void *request = sbrk(size);
-   if(request == (void *) -1)
-   {
-     return NULL;
-   } 
-   else
-   {
+  if(request == (void *) -1)
+    {
+      return NULL;
+    } 
+  else
+    {
       return p;
-   } 
+    } 
 
 }
 
 int main()
 {
-   int *arr = mal(sizeof(int) * 2);
-   arr[0] = 1;
-   arr[1] = 2;
-   printf("%d \n", arr[1]);
+  int *arr = allocate(sizeof(int) * 2);
+  arr[0] = 1;
+  arr[1] = 2;
+  printf("%d \n", arr[1]);
 
- return 0;
+  return 0;
 }
